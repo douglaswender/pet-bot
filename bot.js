@@ -1,14 +1,59 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const config = require('./config.json');
+
+const patchUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
+
+let latestUrl = '';
+
+let data;
+
+const reader = require('./src/readPage');
+
+require('dotenv/config');
+
+client.login(process.env.TOKEN);
 
 client.on('ready', () => {
-  client.user.setPresence({
-      status: 'online',
-      game: {
-          name: `testes`
-      }
-  });
+    //668808435579486220
+    var testChannel;
+
+    client.channels.fetch('668808435579486220').then(channel => {
+        testChannel = channel;
+    });
+
+    // Set the client user's activity
+    client.user.setActivity('$help', { type: 'LISTENING' })
+        .then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
+        .catch(console.error);
+
+
+    setInterval(async () => {
+
+        data = await reader.getUrl(patchUrl);
+
+        console.log(data);
+
+        if (latestUrl !== data[0]) {
+            console.log('atualizando patch notes');
+            //testChannel.send('atualizando patch notes, patch: '+data[0]);
+            latestUrl = data[0];
+            const patch = data[0].split('.');
+            console.log(patch);
+            testChannel.send(`https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
+
+        }
+
+        
+    }, 360000);
+
 });
 
-client.login(config.token);
+client.on("message", (message) => { // EventEmitter
+    if (message.content == "!ping") { // Check if message is "!ping"
+        message.channel.send("Pinging ...") // Placeholder for pinging ... 
+            .then((msg) => { // Resolve promise
+                msg.edit("Ping: " + (Date.now() - msg.createdTimestamp)) // Edits message with current timestamp minus timestamp of message
+            });
+    }
+});
+
