@@ -31,15 +31,12 @@ module.exports = {
 
             data = await reader.getUrl(patchUrl);
 
-            console.log(data);
-
             if (latestUrl !== data[0]) {
                 console.log('atualizando patch notes');
-                //testChannel.send('atualizando patch notes, patch: '+data[0]);
                 latestUrl = data[0];
                 const patch = data[0].split('.');
                 console.log(patch);
-                testChannel.send(`https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
+                testChannel.send(`First: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
 
             }
 
@@ -52,11 +49,10 @@ module.exports = {
 
                 if (latestUrl !== data[0]) {
                     console.log('atualizando patch notes');
-                    //testChannel.send('atualizando patch notes, patch: '+data[0]);
                     latestUrl = data[0];
                     const patch = data[0].split('.');
                     console.log(patch);
-                    testChannel.send(`https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
+                    testChannel.send(`set Interval: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
 
                 }
 
