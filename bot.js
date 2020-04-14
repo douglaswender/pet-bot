@@ -13,7 +13,7 @@ require('dotenv/config');
 
 client.login(process.env.TOKEN);
 
-client.on('ready', () => {
+client.on('ready', async () => {
     //668808435579486220
     var testChannel;
 
@@ -25,6 +25,20 @@ client.on('ready', () => {
     client.user.setActivity('$help', { type: 'LISTENING' })
         .then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
         .catch(console.error);
+
+    data = await reader.getUrl(patchUrl);
+
+    console.log(data);
+
+    if (latestUrl !== data[0]) {
+        console.log('atualizando patch notes');
+        //testChannel.send('atualizando patch notes, patch: '+data[0]);
+        latestUrl = data[0];
+        const patch = data[0].split('.');
+        console.log(patch);
+        testChannel.send(`https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
+
+    }
 
 
     setInterval(async () => {
@@ -43,8 +57,8 @@ client.on('ready', () => {
 
         }
 
-        
-    }, 360000);
+
+    }, 3600000);
 
 });
 
