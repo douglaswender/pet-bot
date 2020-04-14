@@ -20,7 +20,7 @@ module.exports = {
             //668808435579486220
             var testChannel;
 
-            client.channels.fetch('699419762098176033').then(channel => {
+            client.channels.fetch('668808435579486220').then(channel => {
                 testChannel = channel;
             });
 
