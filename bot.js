@@ -36,7 +36,7 @@ module.exports = {
                 latestUrl = data[0];
                 const patch = data[0].split('.');
                 console.log(patch);
-                testChannel.send(`First: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
+                testChannel.send(`https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
 
             }
 
@@ -52,12 +52,12 @@ module.exports = {
                     latestUrl = data[0];
                     const patch = data[0].split('.');
                     console.log(patch);
-                    testChannel.send(`set Interval: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
+                    testChannel.send(`https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
 
                 }
 
 
-            }, 5000);
+            }, 3600000);
 
         });
     },
