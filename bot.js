@@ -3,8 +3,10 @@ const client = new Discord.Client();
 
 const { prefix } = require('./config.json');
 
+const axios = require('axios')
+
 const ytdl = require('ytdl-core');
-const streamOptions = { seek: 0, volume: 0.5 }
+const streamOptions = { volume: 0 }
 
 const patchUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
 
@@ -27,7 +29,7 @@ module.exports = {
             //699419762098176033 - test
             var testChannel;
 
-            client.channels.fetch('668808435579486220').then(channel => {
+            client.channels.fetch('699419762098176033').then(channel => {
                 testChannel = channel;
             });
 
@@ -76,18 +78,59 @@ module.exports = {
 
             if (message.content.startsWith(`${prefix}play`)) {
                 const args = message.content.split(' ');
+                console.log(args);
+                console.log(args[1].startsWith('http'));
                 let voiceChannel = message.member.voice.channel;
+
+
                 console.log(voiceChannel);
                 if (voiceChannel) {
-                    const conn = await voiceChannel.join();
-                    const stream = ytdl(args[1],
-                        { filter: 'audioonly' });
+                    if (args[1].startsWith('http')) {
+                        const conn = await voiceChannel.join();
+                        const stream = ytdl(args[1],
+                            { filter: 'audioonly' });
 
-                    const DJ = conn.play(stream, streamOptions);
+                        const DJ = conn.play(stream, streamOptions);
 
-                    DJ.on('end', end => {
-                        voiceChannel.leave();
-                    })
+                    } else {
+                        const params = {
+                            part: 'id',
+                            key: 'AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM',
+                            term: message.content.toLowerCase().replace('$play', '').replace(' ', '%20').replace('é', '%C3%A9').replace('á', '%C3%A1'),
+                            type: 'video'
+                        };
+                        console.log(params.term);
+                        //api key AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM
+                        //https://www.googleapis.com/youtube/v3/search?part=id&maxResults=5&type=video&q=céu azul&key=AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM
+                        //https://www.googleapis.com/youtube/v3/search?part=${params.part}&maxResults=5&type=video&q=${params.term}&key=${params.key}
+                        axios.get(`https://www.googleapis.com/youtube/v3/search?part=id&maxResults=5&type=video&q=C%C3%A9u%20azul&key=AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM`, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        }).then(async function (response) {
+                            console.log(response.data);
+                            const videoData = response.data.items[0];
+                            console.log('---');
+                            console.log(videoData.id.videoId);
+                            const conn = await voiceChannel.join();
+
+                            const stream = ytdl(`https://www.youtube.com/watch?v=${videoData.id.videoId}`,
+                                {
+                                    filter: 'audioonly',
+                                    quality: 'highestaudio'
+                                }
+                            );
+
+                            const DJ = conn.play(stream, streamOptions);
+                            DJ.setVolume(0.5);
+                            DJ.on('finish', ()=>{
+                                console.log('terminei aqui');
+                                voiceChannel.leave();
+                            });
+
+                        });
+                    }
+
                 } else {
                     message.reply('Você precisa estar conectado em um chat de voz!');
                 }
