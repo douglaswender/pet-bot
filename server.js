@@ -5,8 +5,6 @@ const bot = require('./bot');
 
 var app = express();
 
-
-
 function keepAlive() {
     setInterval(() => {
         var options = {
