@@ -4,6 +4,7 @@ const client = new Discord.Client();
 const { prefix } = require('./config.json');
 
 const ytdl = require('ytdl-core');
+const streamOptions = { seek: 0, volume: 0.5 }
 
 const patchUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
 
@@ -71,11 +72,41 @@ module.exports = {
         client.on("message", async (message) => { // EventEmitter
             if (message.author.bot) return;
             if (!message.content.startsWith(prefix)) return;
-            const serverQueue = queue.get(message.guild.id);
+            //const serverQueue = queue.get(message.guild.id);
 
             if (message.content.startsWith(`${prefix}play`)) {
-                play.execute(message, serverQueue);
-                return;
+                const args = message.content.split(' ');
+                let voiceChannel = message.member.voice.channel;
+                console.log(voiceChannel);
+                if (voiceChannel) {
+                    const conn = await voiceChannel.join();
+                    const stream = ytdl(args[1],
+                        { filter: 'audioonly' });
+
+                    const DJ = conn.play(stream, streamOptions);
+
+                    DJ.on('end', end => {
+                        voiceChannel.leave();
+                    })
+                } else {
+                    message.reply('Você precisa estar conectado em um chat de voz!');
+                }
+                if (voiceChannel === null) {
+                    console.log('Canal não encontrado.');
+                } else {
+
+
+                    // c.join().then(connection => {
+                    //     const stream = ytdl(args[1], 
+                    //     {filter: 'audioonly'});
+                    //     const DJ = connection.playStream(stream, streamOptions);
+
+                    //     DJ.on('end', end=> {
+                    //         voiceChannel.leave();
+                    //     })
+                    // })
+                    // .catch(console.error);
+                }
             } else if (message.content.startsWith(`${prefix}skip`)) {
                 play.skip(message, serverQueue);
                 return;
