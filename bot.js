@@ -1,6 +1,10 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+const { prefix } = require('./config.json');
+
+const ytdl = require('ytdl-core');
+
 const patchUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
 
 let latestUrl = '';
@@ -8,6 +12,7 @@ let latestUrl = '';
 let data;
 
 const reader = require('./src/readPage');
+const play = require('./commands/play');
 
 require('dotenv/config');
 
@@ -20,7 +25,7 @@ module.exports = {
             //668808435579486220
             var testChannel;
 
-            client.channels.fetch('668808435579486220').then(channel => {
+            client.channels.fetch('699419762098176033').then(channel => {
                 testChannel = channel;
             });
 
@@ -62,12 +67,28 @@ module.exports = {
         });
     },
     message() {
-        client.on("message", (message) => { // EventEmitter
-            if (message.content == "!ping") { // Check if message is "!ping"
+        client.on("message", async (message) => { // EventEmitter
+            if (message.author.bot) return;
+            if (!message.content.startsWith(prefix)) return;
+            const serverQueue = queue.get(message.guild.id);
+
+            if (message.content.startsWith(`${prefix}play`)) {
+                play.execute(message, serverQueue);
+                return;
+            } else if (message.content.startsWith(`${prefix}skip`)) {
+                play.skip(message, serverQueue);
+                return;
+            } else if (message.content.startsWith(`${prefix}stop`)) {
+                play.stop(message, serverQueue);
+                return;
+            } else if (message.content.startsWith(`${prefix}ping`)) {
                 message.channel.send("Pinging ...") // Placeholder for pinging ... 
                     .then((msg) => { // Resolve promise
                         msg.edit("Ping: " + (Date.now() - msg.createdTimestamp)) // Edits message with current timestamp minus timestamp of message
                     });
+                return;
+            } else {
+                message.channel.send('You need to enter a valid command!')
             }
         });
     }
