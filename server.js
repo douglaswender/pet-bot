@@ -1,5 +1,6 @@
 var express = require('express')
 var http = require('http');
+const axios = require('axios')
 
 const bot = require('./bot');
 
@@ -7,24 +8,12 @@ var app = express();
 
 function keepAlive() {
     setInterval(() => {
-        var options = {
-            host: "http://localhost:8000/",
-            post: 8000,
-            path: "/"
-        };
-        http.get(options, function (res) {
-            res.on('data', function (chunk) {
-                try {
-                    console.log('heroku response: ' + chunk);
-                } catch (err) {
-                    console.log(err.message);
-                }
-            }).on('error', function (err) {
-                console.log('Error: ' + err.message);
-            })
-        })
-    }, 1000);
+        axios.get("https://pet-bot-riot.herokuapp.com/").then(function(response){
+            console.log(response.data);
+        });
+    }, 20*60*1000);
 }
+keepAlive();
 
 bot.login();
 bot.ready();
