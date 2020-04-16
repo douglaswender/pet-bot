@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const { prefix } = require('./config.json');
+const { prefix, latestPatch } = require('./config.json');
 
 const axios = require('axios')
 
@@ -10,7 +10,7 @@ const streamOptions = { volume: 0 }
 
 const patchUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
 
-let latestUrl = '';
+let latestUrl = latestPatch;
 
 let data;
 
@@ -29,7 +29,7 @@ module.exports = {
             //699419762098176033 - test
             var testChannel;
 
-            client.channels.fetch('668808435579486220').then(channel => {
+            client.channels.fetch('699419762098176033').then(channel => {
                 testChannel = channel;
             });
 
@@ -66,7 +66,7 @@ module.exports = {
                 }
 
 
-            }, 3600000);
+            }, 60*60*1000);
 
         });
     },
