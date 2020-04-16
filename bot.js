@@ -81,9 +81,6 @@ module.exports = {
                 console.log(args);
                 console.log(args[1].startsWith('http'));
                 let voiceChannel = message.member.voice.channel;
-
-
-                console.log(voiceChannel);
                 if (voiceChannel) {
                     if (args[1].startsWith('http')) {
                         console.log('HTTP');
@@ -95,6 +92,12 @@ module.exports = {
                             });
 
                         const DJ = conn.play(stream, streamOptions);
+
+                        DJ.setVolume(0.5);
+                        DJ.on('finish', () => {
+                            console.log('terminei aqui');
+                            voiceChannel.leave();
+                        });
 
                     } else {
                         const params = {
@@ -140,19 +143,6 @@ module.exports = {
                 }
                 if (voiceChannel === null) {
                     console.log('Canal não encontrado.');
-                } else {
-
-
-                    // c.join().then(connection => {
-                    //     const stream = ytdl(args[1], 
-                    //     {filter: 'audioonly'});
-                    //     const DJ = connection.playStream(stream, streamOptions);
-
-                    //     DJ.on('end', end=> {
-                    //         voiceChannel.leave();
-                    //     })
-                    // })
-                    // .catch(console.error);
                 }
             } else if (message.content.startsWith(`${prefix}skip`)) {
                 play.skip(message, serverQueue);
