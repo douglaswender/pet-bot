@@ -86,9 +86,13 @@ module.exports = {
                 console.log(voiceChannel);
                 if (voiceChannel) {
                     if (args[1].startsWith('http')) {
+                        console.log('HTTP');
                         const conn = await voiceChannel.join();
                         const stream = ytdl(args[1],
-                            { filter: 'audioonly' });
+                            {
+                                filter: 'audioonly',
+                                quality: 'highestaudio'
+                            });
 
                         const DJ = conn.play(stream, streamOptions);
 
@@ -103,7 +107,7 @@ module.exports = {
                         //api key AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM
                         //https://www.googleapis.com/youtube/v3/search?part=id&maxResults=5&type=video&q=céu azul&key=AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM
                         //https://www.googleapis.com/youtube/v3/search?part=${params.part}&maxResults=5&type=video&q=${params.term}&key=${params.key}
-                        axios.get(`https://www.googleapis.com/youtube/v3/search?part=id&maxResults=5&type=video&q=C%C3%A9u%20azul&key=AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM`, {
+                        axios.get(`https://www.googleapis.com/youtube/v3/search?part=${params.part}&maxResults=5&type=video&q=${params.term}&key=${params.key}`, {
                             headers: {
                                 'Accept': 'application/json'
                             }
@@ -123,7 +127,7 @@ module.exports = {
 
                             const DJ = conn.play(stream, streamOptions);
                             DJ.setVolume(0.5);
-                            DJ.on('finish', ()=>{
+                            DJ.on('finish', () => {
                                 console.log('terminei aqui');
                                 voiceChannel.leave();
                             });
