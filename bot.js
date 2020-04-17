@@ -29,7 +29,7 @@ module.exports = {
             //699419762098176033 - test
             var testChannel;
 
-            client.channels.fetch('699419762098176033').then(channel => {
+            client.channels.fetch('668808435579486220').then(channel => {
                 testChannel = channel;
             });
 
@@ -66,7 +66,7 @@ module.exports = {
                 }
 
 
-            }, 60*60*1000);
+            }, 60 * 60 * 1000);
 
         });
     },
@@ -74,7 +74,6 @@ module.exports = {
         client.on("message", async (message) => { // EventEmitter
             if (message.author.bot) return;
             if (!message.content.startsWith(prefix)) return;
-            //const serverQueue = queue.get(message.guild.id);
 
             if (message.content.startsWith(`${prefix}play`)) {
                 const args = message.content.split(' ');
@@ -85,19 +84,73 @@ module.exports = {
                     if (args[1].startsWith('http')) {
                         console.log('HTTP');
                         const conn = await voiceChannel.join();
-                        const stream = ytdl(args[1],
-                            {
-                                filter: 'audioonly',
-                                quality: 'highestaudio'
+                        if (args[1].includes('playlist')) {
+                            let indexOfList = message.content.replace(`${prefix}play`, '').indexOf('list=');
+                            console.log(indexOfList);
+                            let listId = message.content.replace(`${prefix}play`, '').substring(indexOfList + 5);
+                            console.log(listId);
+                            const params = {
+                                part: 'snippet',
+                                key: 'AIzaSyAB2hrT-BxfpryUIcFVWbxFRd37EvJZcqM',
+                                listId: listId,
+                                maxResults: 50
+                            };
+                            console.log(params);
+                            //'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&pageToken=CDIQAA&playlistId=PL_Q15fKxrBb5d4FzxegXGGkW2eAgtukpi&key=[YOUR_API_KEY]' \
+
+                            axios.get(`https://www.googleapis.com/youtube/v3/playlistItems?part=${params.part}&maxResults=${params.maxResults}&playlistId=${params.listId}&key=${params.key}`, {
+                                headers: {
+                                    'Accept': 'application/json'
+                                }
+                            }).then(async function (response) {
+                                console.log(response.data);
+                                const videoData = response.data.items;
+
+                                let i = 0;
+
+                                console.log('---');
+                                console.log(videoData.length);
+
+                                const videoId = videoData[i].snippet.resourceId.videoId;
+                                console.log(videoId);
+
+                                function play(videoId, connection) {
+                                    const stream = ytdl(`https://www.youtube.com/watch?v=${videoId}`,
+                                        {
+                                            filter: 'audioonly',
+                                            quality: 'highestaudio'
+                                        }
+                                    );
+
+                                    const DJ = connection.play(stream, streamOptions);
+                                    DJ.setVolume(0.5);
+                                    DJ.on('finish', () => {
+                                        videoData.shift();
+                                        play(videoData[0], connection);
+                                        console.log('terminei uma musica');
+                                    });
+                                }
+
+                                play(videoId, conn);
+
+
                             });
+                        } else {
+                            const stream = ytdl(args[1],
+                                {
+                                    filter: 'audioonly',
+                                    quality: 'highestaudio'
+                                });
 
-                        const DJ = conn.play(stream, streamOptions);
+                            const DJ = conn.play(stream, streamOptions);
 
-                        DJ.setVolume(0.5);
-                        DJ.on('finish', () => {
-                            console.log('terminei aqui');
-                            voiceChannel.leave();
-                        });
+                            DJ.setVolume(0.5);
+                            DJ.on('finish', () => {
+                                console.log('terminei aqui');
+                                voiceChannel.leave();
+                            });
+                        }
+
 
                     } else {
                         const params = {
@@ -141,9 +194,6 @@ module.exports = {
                 } else {
                     message.reply('Você precisa estar conectado em um chat de voz!');
                 }
-                if (voiceChannel === null) {
-                    console.log('Canal não encontrado.');
-                }
             } else if (message.content.startsWith(`${prefix}skip`)) {
                 play.skip(message, serverQueue);
                 return;
@@ -162,14 +212,3 @@ module.exports = {
         });
     }
 };
-
-
-
-
-
-
-
-
-
-
-
