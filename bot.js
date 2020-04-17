@@ -111,8 +111,8 @@ module.exports = {
                                 console.log('---');
                                 console.log(videoData.length);
 
-                                const videoId = videoData[i].snippet.resourceId.videoId;
-                                console.log(videoId);
+                                const id = videoData[i].snippet.resourceId.videoId;
+                                console.log(id);
 
                                 function play(videoId, connection) {
                                     const stream = ytdl(`https://www.youtube.com/watch?v=${videoId}`,
@@ -126,12 +126,12 @@ module.exports = {
                                     DJ.setVolume(0.5);
                                     DJ.on('finish', () => {
                                         videoData.shift();
-                                        play(videoData[0], connection);
+                                        play(videoData[0].snippet.resourceId.videoId, connection);
                                         console.log('terminei uma musica');
                                     });
                                 }
 
-                                play(videoId, conn);
+                                play(id, conn);
 
 
                             });
