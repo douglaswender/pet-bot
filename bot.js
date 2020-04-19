@@ -194,6 +194,15 @@ module.exports = {
                 } else {
                     message.reply('Você precisa estar conectado em um chat de voz!');
                 }
+            } else if (message.content.startsWith(`${prefix}leave`)) {
+                let voiceChannel = message.member.voice.channel;
+                if (voiceChannel) {
+                    voiceChannel.leave();
+                }
+            } else if (message.content.startsWith(`${prefix}help`)) {
+                let voiceChannel = message.member.voice.channel;
+                play.skip(message, serverQueue);
+                return;
             } else if (message.content.startsWith(`${prefix}skip`)) {
                 play.skip(message, serverQueue);
                 return;
@@ -207,7 +216,7 @@ module.exports = {
                     });
                 return;
             } else {
-                message.channel.send('You need to enter a valid command!')
+                message.channel.send('Precisa de um comando válido!')
             }
         });
     }
