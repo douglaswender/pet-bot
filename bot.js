@@ -200,9 +200,13 @@ module.exports = {
                     voiceChannel.leave();
                 }
             } else if (message.content.startsWith(`${prefix}help`)) {
-                let voiceChannel = message.member.voice.channel;
-                play.skip(message, serverQueue);
-                return;
+                const embed = new Discord.MessageEmbed().setTitle('Ajuda')
+                    .setURL('https://github.com/douglaswender/pet-bot')
+                    .setColor(0xff0000).setDescription('Esse é o menu de ajuda para comandos do Pet Bot')
+                    .addField('$play', 'Exemplo: $play https://www.youtube.com/watch?v=2Vv-BfVoq4g')
+                    .addField('$leave', 'Exemplo: $leave')
+                    .setFooter('https://github.com/douglaswender/pet-bot', 'https://vignette.wikia.nocookie.net/leagueoflegends/images/6/6e/Ancient_Krug_Render.png/revision/latest?cb=20190805200952');
+                message.channel.send(embed);
             } else if (message.content.startsWith(`${prefix}skip`)) {
                 play.skip(message, serverQueue);
                 return;
