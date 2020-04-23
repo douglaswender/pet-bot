@@ -14,12 +14,31 @@ let latestUrl = latestPatch;
 
 let data;
 
+let queue = [];
+
 const reader = require('./src/readPage');
-const play = require('./commands/play');
 
 require('dotenv/config');
 
+function play(videoId, connection) {
+    const stream = ytdl(`https://www.youtube.com/watch?v=${videoId}`,
+        {
+            filter: 'audioonly',
+            quality: 'highestaudio'
+        }
+    );
+
+    const DJ = connection.play(stream, streamOptions);
+    DJ.setVolume(0.5);
+    DJ.on('finish', () => {
+        queue.shift();
+        play(queue[0].snippet.resourceId.videoId, connection);
+        console.log('terminei uma musica');
+    });
+}
+
 module.exports = {
+
     login() {
         client.login(process.env.TOKEN);
     },
@@ -45,8 +64,8 @@ module.exports = {
                 latestUrl = data[0];
                 const patch = data[0].split('.');
                 console.log(patch);
-                testChannel.send(`https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
-
+                testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
+                testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}-do-teamfight-tactics/`);
             }
 
 
@@ -104,51 +123,46 @@ module.exports = {
                                 }
                             }).then(async function (response) {
                                 console.log(response.data);
-                                const videoData = response.data.items;
+                                queue = response.data.items;
 
                                 let i = 0;
 
                                 console.log('---');
-                                console.log(videoData.length);
+                                console.log(queue.length);
 
-                                const id = videoData[i].snippet.resourceId.videoId;
+                                const id = queue[0].snippet.resourceId.videoId;
                                 console.log(id);
-
-                                function play(videoId, connection) {
-                                    const stream = ytdl(`https://www.youtube.com/watch?v=${videoId}`,
-                                        {
-                                            filter: 'audioonly',
-                                            quality: 'highestaudio'
-                                        }
-                                    );
-
-                                    const DJ = connection.play(stream, streamOptions);
-                                    DJ.setVolume(0.5);
-                                    DJ.on('finish', () => {
-                                        videoData.shift();
-                                        play(videoData[0].snippet.resourceId.videoId, connection);
-                                        console.log('terminei uma musica');
-                                    });
-                                }
 
                                 play(id, conn);
 
-
                             });
                         } else {
-                            const stream = ytdl(args[1],
-                                {
-                                    filter: 'audioonly',
-                                    quality: 'highestaudio'
+                            let indexOfList = message.content.replace(`${prefix}play`, '').indexOf('?v=');
+                            console.log(indexOfList);
+                            let listId = message.content.replace(`${prefix}play`, '').substring(indexOfList + 3);
+                            console.log(listId);
+
+                            if (queue.length >= 1) {
+                                console.log('existe uma música tocando ou na fila')
+                                queue.push(
+                                    {
+                                        snippet: {
+                                            resourceId: {
+                                                videoId: listId
+                                            }
+                                        }
+                                    });
+                            } else {
+                                console.log('primeira música adicionada com sucesso')
+                                queue.push({
+                                    snippet: {
+                                        resourceId: {
+                                            videoId: listId
+                                        }
+                                    }
                                 });
-
-                            const DJ = conn.play(stream, streamOptions);
-
-                            DJ.setVolume(0.5);
-                            DJ.on('finish', () => {
-                                console.log('terminei aqui');
-                                voiceChannel.leave();
-                            });
+                                play(listId, conn);
+                            }
                         }
 
 
@@ -199,6 +213,17 @@ module.exports = {
                 if (voiceChannel) {
                     voiceChannel.leave();
                 }
+            } else if (message.content.startsWith(`${prefix}next`)) {
+                if (queue.length === 0) {
+                    message.channel.send('Não exitem músicas na fila de reprodução.')
+                } else {
+                    let voiceChannel = message.member.voice.channel;
+                    const conn = await voiceChannel.join();
+                    queue.shift();
+                    play(queue[0].snippet.resourceId.videoId, conn);
+                    console.log('passei uma musica');
+                }
+
             } else if (message.content.startsWith(`${prefix}help`)) {
                 const embed = new Discord.MessageEmbed().setTitle('Ajuda')
                     .setURL('https://github.com/douglaswender/pet-bot')
