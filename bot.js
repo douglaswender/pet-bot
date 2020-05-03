@@ -31,9 +31,14 @@ function play(videoId, connection) {
     const DJ = connection.play(stream, streamOptions);
     DJ.setVolume(0.5);
     DJ.on('finish', () => {
-        queue.shift();
-        play(queue[0].snippet.resourceId.videoId, connection);
-        console.log('terminei uma musica');
+        if (queue.length === 0) {
+            connection.leave();
+        } else {
+            queue.shift();
+            play(queue[0].snippet.resourceId.videoId, connection);
+            console.log('terminei uma musica');
+        }
+
     });
 }
 
