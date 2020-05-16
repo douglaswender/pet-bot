@@ -66,19 +66,19 @@ module.exports = {
 
             if (latestUrl !== data[0]) {
                 console.log('atualizando patch notes');
+                testChannel.send(latestUrl);
                 latestUrl = data[0];
                 const patch = data[0].split('.');
                 console.log(patch);
                 testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
                 testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}-do-teamfight-tactics/`);
+                testChannel.send(latestUrl);
             }
 
 
             setInterval(async () => {
 
                 data = await reader.getUrl(patchUrl);
-
-                console.log(data);
 
                 if (latestUrl !== data[0]) {
                     console.log('atualizando patch notes');
@@ -91,6 +91,8 @@ module.exports = {
 
 
             }, 60 * 60 * 1000);
+
+            //
 
         });
     },
