@@ -64,12 +64,16 @@ module.exports = {
 
             data = await reader.getUrl(patchUrl);
 
-            if (latestUrl !== data[0]) {
+            let patchLink = data[0];
+
+            patchLink = patchLink.split('.');
+
+            patchLink = patchLink[0]+patchLink[1];
+
+            if (latestUrl !== patchLink) {
                 console.log('atualizando patch notes');
                 testChannel.send(latestUrl);
-                latestUrl = data[0];
-                const patch = data[0].split('.');
-                console.log(patch);
+                latestUrl = patchLink;
                 testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
                 testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}-do-teamfight-tactics/`);
                 testChannel.send(latestUrl);
@@ -80,11 +84,9 @@ module.exports = {
 
                 data = await reader.getUrl(patchUrl);
 
-                if (latestUrl !== data[0]) {
+                if (latestUrl !== patchLink) {
                     console.log('atualizando patch notes');
-                    latestUrl = data[0];
-                    const patch = data[0].split('.');
-                    console.log(patch);
+                    latestUrl = patchLink;
                     testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
                     testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}-do-teamfight-tactics/`);
                 }
