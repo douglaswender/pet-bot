@@ -68,14 +68,13 @@ module.exports = {
 
             patchLink = patchLink.split('.');
 
-            patchLink = patchLink[0]+patchLink[1];
+            let patchLinkString = patchLink[0]+patchLink[1];
 
-            if (latestUrl !== patchLink) {
+            if (latestUrl !== patchLinkString) {
                 console.log('atualizando patch notes');
-                testChannel.send(latestUrl);
-                latestUrl = patchLink;
-                testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
-                testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}-do-teamfight-tactics/`);
+                latestUrl = patchLinkString;
+                testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}/`);
+                testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/`);
                 testChannel.send(latestUrl);
             }
 
@@ -87,8 +86,8 @@ module.exports = {
                 if (latestUrl !== patchLink) {
                     console.log('atualizando patch notes');
                     latestUrl = patchLink;
-                    testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}/`);
-                    testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patch[0]}-${patch[1]}-do-teamfight-tactics/`);
+                    testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}/`);
+                    testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/`);
                 }
 
 
