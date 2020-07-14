@@ -68,14 +68,16 @@ module.exports = {
 
             patchLink = patchLink.split('.');
 
-            let patchLinkString = patchLink[0]+patchLink[1];
+            let patchLinkString = patchLink[0]+'.'+patchLink[1];
+
+            console.log(latestUrl);
+            console.log(patchLinkString);
 
             if (latestUrl !== patchLinkString) {
                 console.log('atualizando patch notes');
                 latestUrl = patchLinkString;
                 testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}/`);
                 testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/`);
-                testChannel.send(latestUrl);
             }
 
 
