@@ -13,7 +13,7 @@ function keepAlive() {
         });
     }, 20*60*1000);
 }
-keepAlive();
+// keepAlive();
 
 bot.login();
 bot.ready();
@@ -27,4 +27,4 @@ app.get('/', (req, res) => {
 var port = process.env.PORT || 8000;
 app.listen(port);
 console.log('server started ' + port);
-//keepAlive();
+keepAlive();
