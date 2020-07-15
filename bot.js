@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const { prefix, latestPatch } = require('./config.json');
+const { prefix, latestPatch, channelId } = require('./config.json');
 
 const axios = require('axios')
 
@@ -46,19 +46,21 @@ module.exports = {
 
     login() {
         client.login(process.env.TOKEN);
+
     },
     ready() {
         client.on('ready', async () => {
             //668808435579486220
             //699419762098176033 - test
             var testChannel;
-
-            client.channels.fetch('668808435579486220').then(channel => {
-                testChannel = channel;
-            });
+            testChannel = client.channels.cache.get(channelId);
+            // console.log();
+            // client.channels.fetch('668808435579486220').then(channel => {
+            //     testChannel = channel;
+            // });
 
             // Set the client user's activity
-            client.user.setActivity('$help', { type: 'LISTENING' })
+            client.user.setActivity('pet-bot.io | $help', { type: 'PLAYING' })
                 .then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
                 .catch(console.error);
 
@@ -68,7 +70,7 @@ module.exports = {
 
             patchLink = patchLink.split('.');
 
-            let patchLinkString = patchLink[0]+'.'+patchLink[1];
+            let patchLinkString = patchLink[0] + '.' + patchLink[1];
 
             console.log(latestUrl);
             console.log(patchLinkString);
@@ -253,6 +255,22 @@ module.exports = {
                     .then((msg) => { // Resolve promise
                         msg.edit("Ping: " + (Date.now() - msg.createdTimestamp)) // Edits message with current timestamp minus timestamp of message
                     });
+                return;
+            } else if (message.content.startsWith(`${prefix}patch`)) {
+                data = await reader.getUrl(patchUrl);
+
+                let patchLink = data[0];
+
+                patchLink = patchLink.split('.');
+
+                let patchLinkString = patchLink[0] + '.' + patchLink[1];
+
+                console.log(latestUrl);
+                console.log(patchLinkString);
+
+                message.channel.send(
+                    `Atualmente estamos no patch ${patchLinkString} os links abaixo levam você ao patch notes completo!\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}\nTFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/`
+                );
                 return;
             } else {
                 message.channel.send('Precisa de um comando válido!')

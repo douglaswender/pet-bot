@@ -6,13 +6,13 @@ const bot = require('./bot');
 
 var app = express();
 
-function keepAlive() {
-    setInterval(() => {
-        axios.get("https://pet-bot-riot.herokuapp.com/").then(function(response){
-            console.log(response.data);
-        });
-    }, 20*60*1000);
-}
+// function keepAlive() {
+//     setInterval(() => {
+//         axios.get("https://pet-bot-riot.herokuapp.com/").then(function(response){
+//             console.log(response.data);
+//         });
+//     }, 20*60*1000);
+// }
 // keepAlive();
 
 bot.login();
@@ -27,4 +27,4 @@ app.get('/', (req, res) => {
 var port = process.env.PORT || 8000;
 app.listen(port);
 console.log('server started ' + port);
-keepAlive();
+// keepAlive();
