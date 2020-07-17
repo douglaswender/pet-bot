@@ -88,7 +88,7 @@ module.exports = {
                 data = await reader.getUrl(patchUrl);
 
                 if (latestUrl !== patchLink) {
-                    console.log('atualizando patch notes');
+                    console.log('atualizando patch notes loop');
                     latestUrl = patchLink;
                     testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}/`);
                     testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/`);
