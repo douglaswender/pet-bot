@@ -8,7 +8,9 @@ const axios = require('axios')
 const ytdl = require('ytdl-core');
 const streamOptions = { volume: 0 }
 
-const patchUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
+// const patchUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
+
+const patchUrl = "https://br.leagueoflegends.com/pt-br/news/tags/patch-notes";
 
 let latestUrl = latestPatch;
 
@@ -66,20 +68,20 @@ module.exports = {
 
             data = await reader.getUrl(patchUrl);
 
-            let patchLink = data[0];
-
-            patchLink = patchLink.split('.');
-
-            let patchLinkString = patchLink[0] + '.' + patchLink[1];
-
             console.log(latestUrl);
-            console.log(patchLinkString);
+            console.log(data);
 
-            if (latestUrl !== patchLinkString) {
+            var index = data.indexOf('.');
+
+            data = data[index - 2] + data[index - 1] + '.' + data[index + 1] + data[index + 2];
+
+            console.log(data);
+
+            if (latestUrl !== data) {
                 console.log('atualizando patch notes');
-                latestUrl = patchLinkString;
-                testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}/`);
-                testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/`);
+                latestUrl = data;
+                testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${data.replace('.', '-')}/`);
+                testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${data.replace('.', '-')}-do-teamfight-tactics/`);
             }
 
 
@@ -87,11 +89,15 @@ module.exports = {
 
                 data = await reader.getUrl(patchUrl);
 
-                if (latestUrl !== patchLink) {
+                var index = data.indexOf('.');
+
+                data = data[index - 2] + data[index - 1] + '.' + data[index + 1] + data[index + 2];
+
+                if (latestUrl !== data) {
                     console.log('atualizando patch notes loop');
-                    latestUrl = patchLink;
-                    testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}/`);
-                    testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/\nsetInterval`);
+                    latestUrl = data;
+                    testChannel.send(`SE LIGA NO PATCH NOTES\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${data.replace('.', '-')}/`);
+                    testChannel.send(`TFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${data.replace('.', '-')}-do-teamfight-tactics/\nsetInterval`);
                 }
 
 
@@ -259,17 +265,12 @@ module.exports = {
             } else if (message.content.startsWith(`${prefix}patch`)) {
                 data = await reader.getUrl(patchUrl);
 
-                let patchLink = data[0];
+                var index = data.indexOf('.');
 
-                patchLink = patchLink.split('.');
-
-                let patchLinkString = patchLink[0] + '.' + patchLink[1];
-
-                console.log(latestUrl);
-                console.log(patchLinkString);
+                data = data[index - 2] + data[index - 1] + '.' + data[index + 1] + data[index + 2];
 
                 message.channel.send(
-                    `Atualmente estamos no patch ${patchLinkString} os links abaixo levam você ao patch notes completo!\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}\nTFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${patchLink[0]}-${patchLink[1]}-do-teamfight-tactics/`
+                    `Atualmente estamos no patch ${data} os links abaixo levam você ao patch notes completo!\nLOL: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${data.replace('.', '-')}\nTFT: https://br.leagueoflegends.com/pt-br/news/game-updates/notas-da-atualizacao-${data.replace('.', '-')}-do-teamfight-tactics/`
                 );
                 return;
             } else {
